@@ -35,6 +35,23 @@
 				<div id="mem-model"></div>
 			</div>
 
+			<div id="hdd-info" class="content">
+				<h1><i class="fas fa-hdd"></i> Hard Drive (HDD)</h1>
+				<div class="progress-bar">
+					<div class="progress" id="hdd-progress"></div>
+				</div>
+				<ul>
+          <li><strong>HDD Total: </strong><span id="hdd-total"></span></li>
+					<li><strong>HDD Used: </strong><span id="hdd-used"></span></li>
+          <li><strong>HDD Free: </strong><span id="hdd-free"></span></li>
+				</ul>
+        <ul>
+          <!-- <li><strong>HDD Used: </strong><span id="hdd-used-percent"></span></li> -->
+          <li><strong>Percent Filled: </strong><span id="hdd-capacity"></span></li>
+        </ul>
+				<div id="hdd-model"></div>
+			</div>
+
       <div class="content">
 				<h1><i class="fas fa-info"></i> System Info</h1>
 				<ul>
@@ -71,9 +88,13 @@
 					<i class="fas fa-memory"></i>
 					<p>Memory</p>
 				</li>
+        <li>
+					<i class="fas fa-hdd"></i>
+					<p>HDD</p>
+				</li>
 				<li>
 					<i class="fas fa-info"></i>
-					<p>System Info</p>
+					<p>SysInfo</p>
 				</li>
 				<li>
 					<i class="fas fa-cog"></i>
