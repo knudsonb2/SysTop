@@ -5,7 +5,11 @@ const cpu = osu.cpu
 const mem = osu.mem
 const os = osu.os
 
-let cpuOverload = 80
+let cpuOverload = 10
+let memOverload = 30
+let alertFrequency = 1
+
+
 
 // Run every 2 seconds
 setInterval(() => {
@@ -21,6 +25,17 @@ setInterval(() => {
         } else {
             document.getElementById('cpu-progress').style.background = '#30c88b'
         }
+
+        // Check Overload
+        if (info >= cpuOverload && runNotify(alertFrequency)) {
+            notifyUser({
+                title: 'CPU Overload',
+                body: `CPU is over ${cpuOverload}%`,
+                icon: path.join(__dirname, 'img', 'icon.png')
+            })
+
+            localStorage.setItem('lastNotify', +new Date())
+        }
     })
 
     cpu.free().then(info => {
@@ -29,6 +44,21 @@ setInterval(() => {
 
     //Uptime
     document.getElementById('sys-uptime').innerText = secondsToDhms(os.uptime())
+
+    // Memory
+    mem.info().then(info => {
+        document.getElementById('mem-total').innerText = `${info.totalMemMb} (MB)`
+        document.getElementById('mem-usage').innerText = `${info.usedMemMb} (MB)`
+        document.getElementById('mem-free').innerText = `${info.freeMemMb} (MB)`
+        document.getElementById('mem-percent').innerText = `${info.freeMemPercentage}%`
+
+        document.getElementById('mem-progress').style.width = `${info.freeMemPercentage}%`
+        if (info.freeMemPercentage > memOverload) {
+            document.getElementById('mem-progress').style.background = 'red'
+        } else {
+            document.getElementById('mem-progress').style.background = '#30c88b'
+        }
+    })
 
 
 }, 2000)
@@ -45,13 +75,7 @@ document.getElementById('comp-name').innerHTML = os.hostname()
 // OS
 document.getElementById('os').innerHTML = `${os.type()} ${os.arch()}`
 
-// Memory
-mem.info().then(info => {
-    document.getElementById('mem-total').innerText = `${formatBytes(info.totalMemMb)}`
-    document.getElementById('mem-usage').innerText = `${info.usedMemMb} (MB)`
-    document.getElementById('mem-free').innerText = `${info.freeMemMb} (MB)`
-    document.getElementById('mem-percent').innerText = `${info.freeMemPercentage}%`
-})
+
 
 // HDD
     // HDD
@@ -98,4 +122,18 @@ function formatBytes(bytes, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+//  Send Notification
+function notifyUser (options) {
+    new Notification(options.title, options)
+}
+
+// Check how much time has passed since notification
+function runNotify(frequency) {
+    if (localStorage.getItem('lastNotify') === null) {
+        // Store timestamp
+        localStorage.setItem('lastNotify', +new Date())
+        return true
+    }
 }
